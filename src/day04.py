@@ -26,10 +26,19 @@ for i, line in enumerate(input.splitlines()):
 
 print(f'The total amount of points: {sum}')
 
+memo_get_nonzero_won = {}
+def get_nonzero_won(item):
+    if item not in memo_get_nonzero_won:
+        winning = num_winning[item]
+        r = range(item + 1, item + winning + 1)
+        memo_get_nonzero_won[item] = [n for n in r if num_winning[n] > 0]
+    return memo_get_nonzero_won[item]
+
 while len(queue) > 0:
-    count += 1
     item = queue.pop()
     winning = num_winning[item]
-    queue += list(range(item + 1, item + winning + 1))
+    nonzero_won = get_nonzero_won(item)
+    count += winning - len(nonzero_won) + 1
+    queue += nonzero_won
 
 print(f'The number of scratch cards you end up with: {count}')
