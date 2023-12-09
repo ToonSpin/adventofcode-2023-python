@@ -32,9 +32,11 @@ def extrapolate(history):
 
 total_part_one = 0
 total_part_two = 0
+
 for h in histories:
     extrapolated = extrapolate(h)
     total_part_one += extrapolated[0][-1]
     total_part_two += extrapolated[0][0]
-print(total_part_one)
-print(total_part_two)
+
+print(f'The sum of extrapolated next values: {total_part_one}')
+print(f'The sum of extrapolated previous values: {total_part_two}')

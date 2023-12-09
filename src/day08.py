@@ -45,5 +45,8 @@ def count_steps_part_two(nodes, instructions):
         result = math.lcm(result, n + 1)
     return result
 
-print(count_steps_part_one(nodes, instructions))
-print(count_steps_part_two(nodes, instructions))
+steps_part_one = count_steps_part_one(nodes, instructions)
+print(f'The number of steps needed to reach ZZZ: {steps_part_one}')
+
+steps_part_two = count_steps_part_two(nodes, instructions)
+print(f'Steps needed to reach all Z locations: {steps_part_two}')

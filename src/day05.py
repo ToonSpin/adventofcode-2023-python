@@ -123,8 +123,10 @@ def get_location_for_range(range):
         type = m.get_to()
     return min([r.lower for r in ranges])
 
-print(min([get_location_for_seed(s) for s in seeds]))
+loc_part_one = min([get_location_for_seed(s) for s in seeds])
+print(f'The lowest location number for the seeds: {loc_part_one}')
 
 ranges = [Range(seeds[n], seeds[n+1]) for n in range(0, len(seeds), 2)]
 
-print(min([get_location_for_range(r) for r in ranges]))
+loc_part_two = min([get_location_for_range(r) for r in ranges])
+print(f'The lowest location number for the ranges: {loc_part_two}')

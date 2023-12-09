@@ -21,9 +21,10 @@ product = 1
 for time, distance in races:
     product *= possibilities(time, distance)
 
-print(product)
+print(f'The product of the ways you can win the races: {product}')
 
 time_part_two = int(''.join(lines[0].split()[1:]))
 distance_part_two = int(''.join(lines[1].split()[1:]))
 
-print(possibilities(time_part_two, distance_part_two))
+num_possible = possibilities(time_part_two, distance_part_two)
+print(f'The product for the single, longer race: {num_possible}')
