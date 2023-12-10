@@ -80,17 +80,25 @@ class Grid:
     def height(self):
         return len(self.grid)
 
+    def out_of_bounds(self, x, y):
+        if x < 0 or x >= self.width():
+            return True
+        if y < 0 or y >= self.width():
+            return True
+        return False
+
+
     def interpolate_start(self, x, y):
         poss_at_start = []
+
         for (p, q), possible in self.possible_pipes.items():
             test_x = x + p
             test_y = y + q
-            if test_x < 0 or test_x >= self.width():
-                continue
-            if test_y < 0 or test_y >= self.width():
+            if self.out_of_bounds(test_x, test_y):
                 continue
             if self.grid[test_y][test_x] in possible:
                 poss_at_start.append((p, q))
+
         for tile, possible in self.possible_dirs.items():
             if tile == 'S':
                 continue
@@ -104,31 +112,40 @@ class Grid:
         prev_pos = (x, y)
         new_grid[y][x] = 'S'
         count = 1
+
         while count == 1 or self.grid[y][x] != 'S':
-            cur_tile = self.grid[y][x]
-            new_grid[y][x] = cur_tile
-            done = False
-            for (p, q) in self.possible_dirs[cur_tile]:
-                if done:
-                    break
-                new_x = x + p
-                new_y = y + q
-                if (new_x, new_y) == prev_pos:
-                    continue
-                if new_x < 0 or new_x >= self.width():
-                    continue
-                if new_y < 0 or new_y >= self.width():
-                    continue
-                for possible in self.possible_pipes[(p, q)]:
-                    if self.grid[new_y][new_x] in possible:
-                        prev_pos = (x, y)
-                        (x, y) = (new_x, new_y)
-                        count += 1
-                        done = True
-                        break
+            new_x, new_y = self._next_in_loop(new_grid, (x, y), prev_pos)
+            prev_pos = (x, y)
+            (x, y) = (new_x, new_y)
+            count += 1
+
         result = Grid(new_grid)
         result.interpolate_start(x, y)
         return result
+
+    def _next_in_loop(self, new_grid, pos, prev_pos):
+        x, y = pos
+        cur_tile = self.grid[y][x]
+        new_grid[y][x] = cur_tile
+
+        done = False
+        for (p, q) in self.possible_dirs[cur_tile]:
+            if done:
+                break
+            new_x = x + p
+            new_y = y + q
+
+            if (new_x, new_y) == prev_pos:
+                continue
+            if self.out_of_bounds(new_x, new_y):
+                continue
+
+            for possible in self.possible_pipes[(p, q)]:
+                if self.grid[new_y][new_x] in possible:
+                    done = True
+                    break
+
+        return new_x, new_y
 
 lines = sys.stdin.read().splitlines()
 grid = Grid(lines)
