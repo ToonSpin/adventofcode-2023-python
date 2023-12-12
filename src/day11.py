@@ -6,6 +6,9 @@ class Grid:
         self.empty_rows = Grid._get_empty_rows(lines)
         self.empty_columns = Grid._get_empty_columns(lines)
 
+        self._empty_cols_between = {}
+        self._empty_rows_between = {}
+
         galaxies = []
         for y, line in enumerate(lines):
             galaxies += [(x, y) for (x, c) in enumerate(line) if c == '#']
@@ -18,13 +21,27 @@ class Grid:
                 d += self.distance_between_galaxies(i, j, factor)
         return d
 
+    def empty_rows_between(self, y1, y2):
+        if (y1, y2) not in self._empty_rows_between:
+            a, b = min(y1, y2), max(y1, y2)
+            rows = [c for c in self.empty_rows if c >= a and c < b]
+            self._empty_rows_between[(y1, y2)] = len(rows)
+            self._empty_rows_between[(y2, y1)] = len(rows)
+        return self._empty_rows_between[(y1, y2)]
+
+    def empty_cols_between(self, x1, x2):
+        if (x1, x2) not in self._empty_cols_between:
+            a, b = min(x1, x2), max(x1, x2)
+            columns = [c for c in self.empty_columns if c >= a and c < b]
+            self._empty_cols_between[(x1, x2)] = len(columns)
+            self._empty_cols_between[(x2, x1)] = len(columns)
+        return self._empty_cols_between[(x1, x2)]
+
     def distance_between_galaxies(self, i, j, factor):
-        a, b = self.galaxies[i], self.galaxies[j]
-        x1, x2 = min(a[0], b[0]), max(a[0], b[0])
-        y1, y2 = min(a[1], b[1]), max(a[1], b[1])
-        columns = [c for c in self.empty_columns if c >= x1 and c < x2]
-        rows = [r for r in self.empty_rows if r >= y1 and r < y2]
-        return x2 + y2 - x1 - y1 + (factor - 1) * (len(columns) + len(rows))
+        (x1, y1), (x2, y2) = self.galaxies[i], self.galaxies[j]
+        columns = self.empty_cols_between(x1, x2)
+        rows = self.empty_rows_between(y1, y2)
+        return abs(x2 - x1) + abs(y2 - y1) + (factor - 1) * (columns + rows)
 
     @staticmethod
     def _get_empty_rows(lines):
