@@ -13,13 +13,12 @@ def possibilities(record, groups):
         return 0
 
     if record[0] == '?':
-        return possibilities('#' + record[1:], groups) + possibilities('.' + record[1:], groups)
+        return possibilities('#' + record[1:], groups) + possibilities(record[1:].lstrip('.'), groups)
     if record[0] == '.':
-        return possibilities(record[1:], groups)
+        return possibilities(record.lstrip('.'), groups)
     
     if record[:first_group].replace('?', '#') != first_group * '#':
         return 0
-
     if record[first_group:first_group+1] == '#':
         return 0
 
